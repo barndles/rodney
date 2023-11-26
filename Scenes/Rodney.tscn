@@ -1,0 +1,98 @@
+[gd_scene load_steps=11 format=3 uid="uid://dv73humssmvx0"]
+
+[ext_resource type="Script" path="res://CharacterBody2D.gd" id="1_vdtbd"]
+[ext_resource type="Texture2D" uid="uid://ybtkdy0bktdr" path="res://Sprites/Rodney/Rodney_Sprite_Sheet.png" id="2_fbrbu"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_x6ge7"]
+size = Vector2(6, 9)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_35k5w"]
+atlas = ExtResource("2_fbrbu")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_m1uag"]
+atlas = ExtResource("2_fbrbu")
+region = Rect2(0, 32, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jf4wg"]
+atlas = ExtResource("2_fbrbu")
+region = Rect2(16, 48, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wpqdb"]
+atlas = ExtResource("2_fbrbu")
+region = Rect2(48, 48, 16, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_cskoi"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_35k5w")
+}],
+"loop": true,
+"name": &"fall",
+"speed": 24.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_m1uag")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jf4wg")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_m1uag")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wpqdb")
+}],
+"loop": true,
+"name": &"walk",
+"speed": 8.0
+}, {
+"frames": [],
+"loop": true,
+"name": &"wallSlide",
+"speed": 5.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_32ky0"]
+size = Vector2(2, 8)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_mqvux"]
+size = Vector2(2, 8)
+
+[node name="CharacterBody2D" type="CharacterBody2D"]
+collision_layer = 2
+collision_mask = 63
+script = ExtResource("1_vdtbd")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, 1.5)
+shape = SubResource("RectangleShape2D_x6ge7")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(0, -2)
+sprite_frames = SubResource("SpriteFrames_cskoi")
+animation = &"fall"
+
+[node name="wallCheckR" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="wallCheckR"]
+position = Vector2(4, 1)
+shape = SubResource("RectangleShape2D_32ky0")
+
+[node name="WallCheckL" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="WallCheckL"]
+position = Vector2(-4, 1)
+shape = SubResource("RectangleShape2D_mqvux")
+
+[connection signal="body_entered" from="wallCheckR" to="." method="_on_wall_check_r_body_entered"]
+[connection signal="body_exited" from="wallCheckR" to="." method="_on_wall_check_r_body_exited"]
+[connection signal="body_entered" from="WallCheckL" to="." method="_on_wall_check_l_body_entered"]
+[connection signal="body_exited" from="WallCheckL" to="." method="_on_wall_check_l_body_exited"]
