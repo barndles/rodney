@@ -10,23 +10,24 @@ const AIR_FRICTION = 0.8
 const BASE_COYOTE = 7
 const TERMINAL_VELOCITY = 300
 var coyote
-const BASE_WALL_COYOTE = 7
+
+const BASE_WALL_COYOTE = 5
 var wall_coyote
-const JUMP_BUFFER = 3  
-const WALL_BUFFER = 3
+const WALL_BUFFER = 5
 var wall_buffer
+
+const JUMP_BUFFER = 3  
 const JUMP_TIME = 15
 var jumpcounter
 @onready var wall_check_r = $wallCheckR
 @onready var wall_check_l = $WallCheckL
-const WALLJUMP_VECTOR = Vector2(300, -250)
+const WALLJUMP_VECTOR = Vector2(200, -150)
 var can_walljump
 var jump_buffer
 var isOnWallR
 var isOnWallL
 var isOnWall
-@export var SpawnerPath : NodePath
-@onready var Spawner := get_node(SpawnerPath) as Node2D
+var LastWallL
 
 
 
@@ -41,7 +42,6 @@ func _init():
 	wall_buffer = WALL_BUFFER
 	jump_buffer = 0
 	jumpcounter = JUMP_TIME
-	print(Spawner.position)
 
 func _process(delta):
 	if abs(velocity.x) <= 0.01 and is_on_floor(): characterSprite.play("idle")
@@ -59,9 +59,9 @@ func _physics_process(delta):
 			velocity.y += gravity * delta
 		velocity.x *= AIR_FRICTION
 		coyote -= 1
+		if isOnWall: wall_coyote = BASE_WALL_COYOTE
 	if is_on_floor():
 		coyote = BASE_COYOTE
-		wall_coyote = 0
 		jumpcounter = JUMP_TIME
 		velocity.x *= GROUND_FRICTION
 	
@@ -69,19 +69,18 @@ func _physics_process(delta):
 	if Input.is_action_just_pressed("jump"): # Handle yump buffering
 		jump_buffer = JUMP_BUFFER
 		wall_buffer = WALL_BUFFER
+		print("yump")
 	else: jump_buffer -= 1
 	if jump_buffer > 0 and coyote > 0:
 		velocity.y = JUMP_VELOCITY
-		wall_coyote = 0
 		coyote = 0
 	if velocity.y < 0 and !Input.is_action_pressed("jump"): # slow upward momentum faster when not holding yump
 		velocity.y = max(velocity.y, JUMP_VELOCITY/3)
 	
 	# Wall Jump
-	wall_coyote -= 1
 	wall_buffer -= 1
+	wall_coyote -= 1
 	if !is_on_floor() and isOnWall:
-		wall_coyote = BASE_WALL_COYOTE
 		if velocity.y > 0:
 			if Input.is_action_pressed("right"):
 				velocity.y = 10
@@ -90,9 +89,10 @@ func _physics_process(delta):
 		# walljump
 	if is_on_floor(): wall_buffer = 0
 	if wall_buffer > 0 and wall_coyote > 0:
-		wall_coyote = 0
-		if isOnWallL: velocity = WALLJUMP_VECTOR * Vector2(1, 1)
-		if isOnWallR: velocity = WALLJUMP_VECTOR * Vector2(-1, 1)
+		if LastWallL: velocity = WALLJUMP_VECTOR * Vector2(1, 1)
+		if !LastWallL: velocity = WALLJUMP_VECTOR * Vector2(-1, 1)
+		
+	print(Vector2(get_wall_normal()))
 			
 # move and flip sprite
 	if Input.is_action_pressed("left"): 
@@ -112,12 +112,17 @@ func _physics_process(delta):
 
 func _on_wall_check_r_body_entered(body):
 	isOnWallR = true
+	LastWallL = false
+	
 
 func _on_wall_check_r_body_exited(body):
 	isOnWallR = false
+	if !is_on_floor(): wall_coyote = BASE_WALL_COYOTE
 
 func _on_wall_check_l_body_entered(body):
 	isOnWallL = true
+	LastWallL = true
 
 func _on_wall_check_l_body_exited(body):
 	isOnWallL = false
+	if !is_on_floor(): wall_coyote = BASE_WALL_COYOTE
