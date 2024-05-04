@@ -12,10 +12,14 @@ config_version=5
 
 config/name="Rodney"
 run/main_scene="res://Main.tscn"
-config/features=PackedStringArray("4.1", "Forward Plus")
+config/features=PackedStringArray("4.2", "Forward Plus")
 run/max_fps=60
 boot_splash/bg_color=Color(0.141176, 0.141176, 0.141176, 1)
 config/icon="res://icon.svg"
+
+[autoload]
+
+Autoload="*res://Scripts/Autoload.gd"
 
 [display]
 
@@ -25,6 +29,10 @@ window/size/window_width_override=1280
 window/size/window_height_override=720
 window/stretch/mode="canvas_items"
 window/ios/allow_high_refresh_rate=false
+
+[dotnet]
+
+project/assembly_name="Rodney"
 
 [editor]
 

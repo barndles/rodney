@@ -1,6 +1,6 @@
 [gd_scene load_steps=11 format=3 uid="uid://dv73humssmvx0"]
 
-[ext_resource type="Script" path="res://CharacterBody2D.gd" id="1_vdtbd"]
+[ext_resource type="Script" path="res://Scripts/CharacterBody2D.gd" id="1_mxrwk"]
 [ext_resource type="Texture2D" uid="uid://ybtkdy0bktdr" path="res://Sprites/Rodney/Rodney_Sprite_Sheet.png" id="2_fbrbu"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_x6ge7"]
@@ -69,7 +69,7 @@ size = Vector2(2, 8)
 [node name="CharacterBody2D" type="CharacterBody2D"]
 collision_layer = 2
 collision_mask = 63
-script = ExtResource("1_vdtbd")
+script = ExtResource("1_mxrwk")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(0, 1.5)
@@ -81,6 +81,8 @@ sprite_frames = SubResource("SpriteFrames_cskoi")
 animation = &"fall"
 
 [node name="wallCheckR" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 5
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="wallCheckR"]
 position = Vector2(4, 1)
